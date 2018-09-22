@@ -14,12 +14,20 @@ Nginx's `ssl_ciphers` parameter uses `int SSL_CTX_set_cipher_list(SSL_CTX *ctx, 
 
 This patch add some functions to parse a new parameter, `ssl_ciphers_tls13`, in the configure file, get the TLSv1.3 cipher-suites string and pass it to OpenSSL with `int SSL_CTX_set_ciphersuites(SSL_CTX *ctx, const char *str);`.
 
-## How to use?
+```shell
+$ cd {nginx_source_path}
+$ patch -p1 < {path_to_patch}/nginx_tls13.patch
+$ ./configure --with-openssl={/path/to/openssl-1.1.1} {your_arguments}
+$ make
+$ sudo make install
+```
+
 ```
 server {
   listen 443 ssl http2;
   server_name domain.tld;
   // ...
+  ssl_protocols TLSv1.2 TLSv1.3;
   ssl_ciphers_tls13 TLS_AES_128_GCM_SHA256;
 }
 ```
@@ -40,5 +48,3 @@ Yes, it has passed the compilation and runtime tests with nginx 1.15.3 (latest@2
 ### Bug:
 
 Due to unknown reason, you _must_ define `ssl_ciphers_tls13` parameter in every `server {}` blocks which listening as SSL, although TLSv1.3 is not enabled, or 'segmentation fault' will block the server from running.
-
-#### TBC
