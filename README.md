@@ -1,3 +1,9 @@
+### 2018.11.05 Update:
+
+Apply this patch on nginx 1.15.5 will no longer requires `ssl_ciphers_tls13` per virtual host, thus, the only bug (we currently found) does not exist anymore.
+
+You can set TLS 1.3 cipher with this patch on nginx normally if your nginx source is up-to-date.
+
 ## What is this patch?
 
 This patch enabled nginx to set the sequence of TLSv1.3 cipher-suites when compiled with OpenSSL 1.1.1+
@@ -47,4 +53,4 @@ Yes, it has passed the compilation and runtime tests with nginx 1.15.3 (latest@2
 
 ### Bug:
 
-Due to unknown reason, you _must_ define `ssl_ciphers_tls13` parameter in every `server {}` blocks which listening as SSL, although TLSv1.3 is not enabled, or 'segmentation fault' will block the server from running.
+~~~Due to unknown reason, you _must_ define `ssl_ciphers_tls13` parameter in every `server {}` blocks which listening as SSL, although TLSv1.3 is not enabled, or 'segmentation fault' will block the server from running.~~~
