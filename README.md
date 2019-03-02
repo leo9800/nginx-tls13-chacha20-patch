@@ -36,7 +36,7 @@ Compile the patched nginx:
 
 ```
 $ cd {nginx_source_path}
-$ patch -p1 < {path_to_patch}/nginx_tls13_chacha20.patch
+$ patch -p1 < {path_to_patch}/nginx_tls13_chacha20_{NGINX_VERSION}.patch
 $ ./configure --with-openssl={/path/to/openssl-1.1.1} {your_arguments}
 $ make
 $ sudo make install
