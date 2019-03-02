@@ -3,6 +3,11 @@
 1. Enabling nginx to set the sequence of TLS 1.3 cipher-suites.
 2. (And) prefer to use CHACHA20 ciphers on those devices which have no AES instructions.
 
+## Compatibility
+
+ - The patch file(s) with suffix `_1_15_8` was(were) tested to be compatible with nginx 1.15.6 to 1.15.8
+ - When patching nginx 1.15.9, file(s) with suffix `_1_15_9` is(are) required.
+
 ## How does it work?
 
 ### TLS 1.3 cipher-suites
@@ -63,7 +68,8 @@ Both features requires OpenSSL 1.1.1 or higher version. But the patch for CHACHA
 
 ## Test result
 
-This patch has been tested with nginx 1.15.6 and OpenSSL 1.1.1, it passed both compilation and run-time tests.
+~~This patch has been tested with nginx 1.15.6 and OpenSSL 1.1.1, it passed both compilation and run-time tests.~~
+\[20190303\] Update: This patch has been tested with nginx 1.15.9 and OpenSSL 1.1.1b, it passed both compilation and run-time tests.
 
 ### Informations (may helpful)
 
