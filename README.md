@@ -69,6 +69,7 @@ Both features requires OpenSSL 1.1.1 or higher version. But the patch for CHACHA
 ## Test result
 
 ~~This patch has been tested with nginx 1.15.6 and OpenSSL 1.1.1, it passed both compilation and run-time tests.~~
+
 \[20190303\] Update: This patch has been tested with nginx 1.15.9 and OpenSSL 1.1.1b, it passed both compilation and run-time tests.
 
 ### Informations (may helpful)
