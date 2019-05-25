@@ -1,14 +1,45 @@
 ## What does this patch do?
 
 1. Enabling nginx to set the sequence of TLS 1.3 cipher-suites.
-2. (And) prefer to use CHACHA20 ciphers on those devices which have no AES instructions.
+2. Prefer to use CHACHA20 ciphers on those devices with no AES instructions.
 
 ## Compatibility
 
- - The patch file(s) with suffix `_1_15_8` was(were) tested to be compatible with nginx 1.15.6 to 1.15.8
- - When patching nginx 1.15.9, file(s) with suffix `_1_15_9` is(are) required.
+ - In general, patch nginx code with the patch file with corressponding version, e.g. version suffix `_1_15_9` is for nginx 1.15.9
+ - The patch files with suffix `_1_15_8` were designed for nginx 1.15.6 to 1.15.8
+
+## How to use?
+
+Patch and compile nginx:
+
+```
+$ cd {nginx_source_path}
+$ patch -p1 < {path_to_patch}/nginx_tls13_chacha20_{NGINX_VERSION}.patch
+$ ./configure --with-openssl={/path/to/openssl-1.1.1} {your_arguments}
+$ make
+$ sudo make install
+```
+Tips: use `/path/to/nginx -V` to get the compile arguments from the installed nginx, and replace `{your_arguments}` with them.
+
+Modify nginx config file:
+
+```
+http {
+# ...
+ssl_protocols TLSv1.2 TLSv1.3;
+ssl_ciphers ECDHE-RSA-AES128-GCM-SHA256:ECDHE-RSA-CHACHA20-POLY1305;
+ssl_ciphers_tls13 TLS_AES_128_GCM_SHA256:TLS_CHACHA20_POLY1305_SHA256;
+ssl_prefer_server_ciphers on;
+ssl_prefer_chacha20 on;
+# ...
+}
+```
+
+If you applied the TLS 1.3-only patch (`nginx_tls13.patch`), do not add `ssl_prefer_chacha20 on;` or `nginx -t` will fail and nginx won't startup.
 
 ## How does it work?
+
+TL;DR
 
 ### TLS 1.3 cipher-suites
 
@@ -35,42 +66,21 @@ TLS_AES_128_GCM_SHA256:TLS_CHACHA20_POLY1305_SHA256:TLS_AES_256_GCM_SHA384:ECDHE
 ```
 Whether CHACHA20 suites as the first option of client is the judgement.
 
-## How to use?
-
-Compile the patched nginx:
-
-```
-$ cd {nginx_source_path}
-$ patch -p1 < {path_to_patch}/nginx_tls13_chacha20_{NGINX_VERSION}.patch
-$ ./configure --with-openssl={/path/to/openssl-1.1.1} {your_arguments}
-$ make
-$ sudo make install
-```
-Modify nginx config file:
-
-```
-http {
-# ...
-ssl_protocols TLSv1.2 TLSv1.3;
-ssl_ciphers ECDHE-RSA-AES128-GCM-SHA256:ECDHE-RSA-CHACHA20-POLY1305;
-ssl_ciphers_tls13 TLS_AES_128_GCM_SHA256:TLS_CHACHA20_POLY1305_SHA256;
-ssl_prefer_server_ciphers on;
-ssl_prefer_chacha20 on;
-# ...
-}
-```
-
-If you applied the TLS 1.3-only patch (`nginx_tls13.patch`), do not add `ssl_prefer_chacha20 on;` as it will break nginx down.
-
 ## Requirements
 
-Both features requires OpenSSL 1.1.1 or higher version. But the patch for CHACHA20 priority also works with OpenSSL 1.1.0 or higher if [this patch](https://github.com/Hardrain980/openssl-1.1.0-patch) has been applied to its[OpenSSL 1.1.0+] code.
+TLS 1.3 requires OpenSSL 1.1.1 or a higher version, or other OpenSSL-compatible SSL implements with TLS 1.3 support.
+
+CHACHA20 periority relies on OpenSSL 1.1.1+ or [patched](https://github.com/Hardrain980/openssl-1.1.0-patch) OpenSSL 1.1.0 
+
+Using patched OpenSSL 1.1.0 branch is _NOT_ recommended, as it has reached its EOL (end of life), security fixes may not available anymore, you should upgrade to OpenSSL 1.1.1
 
 ## Test result
 
 ~~This patch has been tested with nginx 1.15.6 and OpenSSL 1.1.1, it passed both compilation and run-time tests.~~
 
 \[20190303\] Update: This patch has been tested with nginx 1.15.9 and OpenSSL 1.1.1b, it passed both compilation and run-time tests.
+
+\[20190525\] Update: This patch has been tested with nginx 1.17.0 and OpenSSL 1.1.1b, it passed both compilation and run-time tests.
 
 ### Informations (may helpful)
 
